@@ -16,18 +16,201 @@
   }
 }
 
+/* 초기세팅 */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+body {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+.ConditionalBackground {
+  background-color: #f8f9fa;
+}
+.HomeLayout__block {
+  display: flex;
+  justify-content: center;
+  flex-flow: row wrap;
+}
+.responsive_mainResponsive {
+  width: 1728px;
+  height: -moz-fit-content;
+  height: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 1919px) {
+  .responsive_mainResponsive {
+    width: 1374px;
+  }
+}
+
+@media screen and (max-width: 1056px) {
+  .responsive_mainResponsive {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 1440px) {
+  .responsive_mainResponsive {
+    width: 1024px;
+  }
+}
+
+.responsive_mainResponsive___uG64 {
+  width: 1728px;
+  height: -moz-fit-content;
+  height: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@font-face {
+  font-family: "Hack-Bold";
+  src: url("../public/assets/fonts/Hack-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Hack-BoldItalic";
+  src: url("../public/assets/fonts/Hack-BoldItalic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Hack-Italic";
+  src: url("../public/assets/fonts/Hack-Italic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Hack-Regular";
+  src: url("../public/assets/fonts/Hack-Regular.ttf") format("truetype");
 }
