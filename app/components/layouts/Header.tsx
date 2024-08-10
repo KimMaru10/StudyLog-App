@@ -9,7 +9,7 @@ import loginImage from "../../../public/assets/imgs/loginImage.svg";
 import close from "../../../public/assets/imgs/close.svg";
 
 const Header = () => {
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const modalBackground = useRef<HTMLDivElement | null>(null);

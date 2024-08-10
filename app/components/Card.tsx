@@ -22,7 +22,7 @@ const Card: React.FC<CardProps> = ({ data }) => {
   const createdAtDate = new Date(data.createdAt);
 
   return (
-    <div className="bg-white transition-shadow ease-in-out delay-150 hover:-translate-y-3 rounded-md shadow-md hover:shadow-lg transform duration-250">
+    <div className="bg-white transition-shadow ease-in-out hover:-translate-y-3 rounded-md shadow-md hover:shadow-2xl transform duration-250">
       <Image src={testImg} alt="임시 이미지" className="w-full" />
       <div className="w-full h-[165px] p-4">
         <div className="h-[115px]">

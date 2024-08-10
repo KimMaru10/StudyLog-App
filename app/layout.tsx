@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+// import AuthProdiver from "@/lib/next-auth";
+import RecoilRootWrapper from "./components/RecoilWrapper";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +22,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="ConditionalBackground">
           <div className="HomeLayout__block">
-            <div className="responsive_mainResponsive">{children}</div>
+            <div className="responsive_mainResponsive">
+              <RecoilRootWrapper>{children}</RecoilRootWrapper>
+            </div>
           </div>
         </div>
       </body>
