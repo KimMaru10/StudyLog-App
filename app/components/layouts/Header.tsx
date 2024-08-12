@@ -7,8 +7,11 @@ import search from "../../../public/assets/imgs/search.svg";
 import userIcon from "../../../public/assets/imgs/userIcon.png";
 import loginImage from "../../../public/assets/imgs/loginImage.svg";
 import close from "../../../public/assets/imgs/close.svg";
-
-const Header = () => {
+import studyLogIcon from "../../../public/assets/imgs/studyLogIcon.svg";
+interface HeaderProps {
+  name?: string;
+}
+const Header: React.FC<HeaderProps> = ({ name }) => {
   const [login, setLogin] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -23,10 +26,21 @@ const Header = () => {
   };
 
   return (
-    <div className="flex justify-between items-center w-full py-[12px] lg: px-[12px]">
-      <Link href="/">
-        <p className="font-hack-bold text-xl">StudyLog</p>
-      </Link>
+    <div className="flex justify-between items-center w-full py-[12px] ">
+      {!name ? (
+        <Link href="/">
+          <p className="font-hack-bold text-2xl text-[#212529]">StudyLog</p>
+        </Link>
+      ) : (
+        <div className="flex">
+          <Link href={"/"}>
+            <Image src={studyLogIcon} alt="studyLogIcon" />
+          </Link>
+          <Link href={`/${name}`} className="ml-[16px]">
+            <p className="font-hack-bold text-2xl">{name}.StudyLog</p>
+          </Link>
+        </div>
+      )}
       {login ? (
         <div className="flex items-center">
           <div className="mx-1 hover:bg-[#EFEFEF] rounded-[50%] w-[40px] h-[40px] flex justify-center items-center">
@@ -41,9 +55,11 @@ const Header = () => {
           </div>
           <Link
             href="/write"
-            className=" flex justify-center items-center w-[82.29px] h-[32px] mx-3 rounded-[15px] border-[1px] border-black text-black hover:bg-black hover:text-[#ffffff]"
+            className=" flex justify-center items-center h-[32px] "
           >
-            <p>새 글 작성</p>
+            <button className="w-full h-full mx-3 px-4 py-[1px] rounded-[15px] border-[1px] border-black text-black hover:bg-black hover:text-[#ffffff]">
+              새 글 작성
+            </button>
           </Link>
           <Image
             src={userIcon}
