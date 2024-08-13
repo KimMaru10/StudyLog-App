@@ -15,7 +15,7 @@ const Profile = ({ params }: { params: { userId: string } }) => {
     const fetchUser = async () => {
       try {
         const users = await getAllUsers();
-        const foundUser = users.find((user: any) => user.userId === userId);
+        const foundUser = users.find((user: any) => user.user_id === userId);
         setUser(foundUser);
       } catch (error) {
         console.error(
