@@ -1,12 +1,21 @@
 "use client";
+
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import { postState } from "../../../recoil/atoms";
+import { postBoard } from "@/utils/supabaseFunction";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../../utils/supabase";
 
 const Publish = () => {
   const [post, setPost] = useRecoilState(postState);
-  const [textareaValue, setTextareaValue] = useState<string>("");
-  const [urlValue, setUrlValue] = useState<string>(post.title);
+  const [textareaValue, setTextareaValue] = useState<string>(
+    post.short_description || ""
+  );
+  const [urlValue, setUrlValue] = useState<string>(post.title || "");
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
+  const [uploadImg, setUploadImg] = useState<File | null>();
+  const router = useRouter();
 
   // 글자 수 카운트를 위한 상수
   const maxLength = 150;
@@ -14,19 +23,102 @@ const Publish = () => {
   // 텍스트 변경 핸들러
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
+    setPost((prevPost) => ({ ...prevPost, short_description: e.target.value }));
   };
 
   // URL 입력 변경 핸들러
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrlValue(e.target.value);
+    setPost((prevPost) => ({ ...prevPost, custom_url: e.target.value }));
   };
 
   // 공개 상태 변경 핸들러
   const handlePublicStatusChange = (status: boolean) => {
-    setPost(prevPost => ({
-      ...prevPost,
-      public_status: status
-    }));
+    setPost((prevPost) => ({ ...prevPost, public_status: status }));
+  };
+
+  // 썸네일 미리보기 핸들러
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const fileUrl = URL.createObjectURL(file);
+      setUploadImg(file);
+      setThumbnailUrl(fileUrl);
+    }
+  };
+
+  // 게시물 등록 핸들러
+  const handleUpload = async () => {
+    //게시물 업로드 하는 코드가 들어가야 함
+    if (uploadImg) {
+      try {
+        // Supabase 저장소에 이미지를 업로드
+        const { data, error } = await supabase.storage
+          .from("StudyLog")
+          .upload(
+            `thumbnail/${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+            uploadImg
+          );
+
+        // 업로드 중 오류 처리
+        if (error) {
+          console.error("이미지 업로드 중 오류 발생:", error.message);
+          return;
+        }
+
+        // 업로드된 데이터가 없는 경우 처리
+        if (!data || !data.path) {
+          console.error(
+            "업로드된 데이터가 null이거나 경로를 찾을 수 없습니다."
+          );
+          return;
+        }
+
+        // 업로드된 이미지의 공개 URL 가져오기
+        const publicUrlData = supabase.storage
+          .from("StudyLog")
+          .getPublicUrl(data.path);
+
+        // 반환된 객체에서 `publicURL` 문자열을 추출
+        const publicUrl = publicUrlData.data.publicUrl;
+        if (!publicUrl) {
+          console.error("공개 URL을 가져올 수 없습니다.");
+          return;
+        }
+        try {
+          await postBoard(
+            post.user_id,
+            post.title,
+            post.content,
+            post.tags,
+            publicUrl,
+            post.public_status,
+            `/${post.user_id}/${
+              !post.custom_url ? post.title : post.custom_url
+            }`,
+            post.short_description
+          );
+          setPost((prevPost) => ({
+            ...prevPost,
+            title: "",
+            content: "",
+            tags: [] as string[],
+            thumbnail_url: "",
+            public_status: true,
+            custom_url: "",
+            short_description: "",
+          }));
+          alert("성공적으로 게시물이 등록되었습니다.");
+          router.push("/");
+        } catch (error) {
+          console.error("게시물 등록하는 과정에서 에러 발생: ", error);
+        }
+      } catch (err) {
+        console.error("업로드 처리 중 예기치 않은 오류가 발생했습니다:", err);
+      }
+    } else {
+      alert("이미지를 입력해주세요");
+    }
   };
 
   return (
@@ -39,26 +131,47 @@ const Publish = () => {
           <div className="contents">
             <div className="w-full pt-[55%] relative">
               <div className="w-full h-full absolute left-0 top-0 shadow-[0px_0px_4px_rgba(0,0,0,0.03)]">
-                <div className="bg-[#e9ecef] w-full h-full flex justify-center items-center flex-col">
-                  <svg width="107" height="85" fill="none" viewBox="0 0 107 85">
-                    <path
-                      fill="#868E96"
-                      d="M105.155 0H1.845A1.844 1.844 0 0 0 0 1.845v81.172c0 1.02.826 1.845 1.845 1.845h103.31A1.844 1.844 0 0 0 107 83.017V1.845C107 .825 106.174 0 105.155 0zm-1.845 81.172H3.69V3.69h99.62v77.482z"
-                    ></path>
-                    <path
-                      fill="#868E96"
-                      d="M29.517 40.84c5.666 0 10.274-4.608 10.274-10.271 0-5.668-4.608-10.276-10.274-10.276-5.665 0-10.274 4.608-10.274 10.274 0 5.665 4.609 10.274 10.274 10.274zm0-16.857a6.593 6.593 0 0 1 6.584 6.584 6.593 6.593 0 0 1-6.584 6.584 6.591 6.591 0 0 1-6.584-6.582c0-3.629 2.954-6.586 6.584-6.586zM12.914 73.793a1.84 1.84 0 0 0 1.217-.46l30.095-26.495 19.005 19.004a1.843 1.843 0 0 0 2.609 0 1.843 1.843 0 0 0 0-2.609l-8.868-8.868 16.937-18.548 20.775 19.044a1.846 1.846 0 0 0 2.492-2.72L75.038 31.846a1.902 1.902 0 0 0-1.328-.483c-.489.022-.95.238-1.28.6L54.36 51.752l-8.75-8.75a1.847 1.847 0 0 0-2.523-.081l-31.394 27.64a1.845 1.845 0 0 0 1.22 3.231z"
-                    ></path>
-                  </svg>
-                  <button className="mt-4 px-8 py-1 bg-white text-base font-bold text-[#20c997] hover:opacity-80 delay-75">
+                <div
+                  className="bg-[#e9ecef] w-full h-full flex justify-center items-center flex-col "
+                  style={{
+                    backgroundImage: `url(${thumbnailUrl})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  <div className={`${thumbnailUrl ? "hidden" : ""}`}>
+                    <svg
+                      width="107"
+                      height="85"
+                      fill="none"
+                      viewBox="0 0 107 85"
+                    >
+                      <path
+                        fill="#868E96"
+                        d="M105.155 0H1.845A1.844 1.844 0 0 0 0 1.845v81.172c0 1.02.826 1.845 1.845 1.845h103.31A1.844 1.844 0 0 0 107 83.017V1.845C107 .825 106.174 0 105.155 0zm-1.845 81.172H3.69V3.69h99.62v77.482z"
+                      ></path>
+                      <path
+                        fill="#868E96"
+                        d="M29.517 40.84c5.666 0 10.274-4.608 10.274-10.271 0-5.668-4.608-10.276-10.274-10.276-5.665 0-10.274 4.608-10.274 10.274 0 5.665 4.609 10.274 10.274 10.274zm0-16.857a6.593 6.593 0 0 1 6.584 6.584 6.593 6.593 0 0 1-6.584 6.584 6.591 6.591 0 0 1-6.584-6.582c0-3.629 2.954-6.586 6.584-6.586zM12.914 73.793a1.84 1.84 0 0 0 1.217-.46l30.095-26.495 19.005 19.004a1.843 1.843 0 0 0 2.609 0 1.843 1.843 0 0 0 0-2.609l-8.868-8.868 16.937-18.548 20.775 19.044a1.846 1.846 0 0 0 2.492-2.72L75.038 31.846a1.902 1.902 0 0 0-1.328-.483c-.489.022-.95.238-1.28.6L54.36 51.752l-8.75-8.75a1.847 1.847 0 0 0-2.523-.081l-31.394 27.64a1.845 1.845 0 0 0 1.22 3.231z"
+                      ></path>
+                    </svg>
+                  </div>
+
+                  <label className="mt-4 px-8 py-1 bg-white text-base font-bold text-[#20c997] hover:opacity-80 delay-75 cursor-pointer">
                     썸네일 업로드
-                  </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleThumbnailChange}
+                    />
+                  </label>
                 </div>
               </div>
             </div>
             <div className="mt-6">
               <h4 className="text-lg font-semibold mt-0 mb-2 leading-6">
-                {"안녕하세요"}
+                {`${post.title}`}
               </h4>
               <textarea
                 placeholder="당신의 포스트를 짧게 소개해보세요"
@@ -123,7 +236,7 @@ const Publish = () => {
                 URL 설정
               </h3>
               <div className="flex bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.05)] p-3 leading-6">
-                <div className="text-[#868e96]">{`/${"userId"}/`}</div>
+                <div className="text-[#868e96]">{`/${post.user_id}/`}</div>
                 <input
                   type="text"
                   value={urlValue}
@@ -137,7 +250,10 @@ const Publish = () => {
             <button className="inline-flex items-center justify-center font-semibold cursor-pointer outline-none border-none bg-none text-[#12b886] rounded-md px-4 py-1.5 text-xl hover:bg-[#E9ECEF] ">
               취소
             </button>
-            <button className="inline-flex items-center justify-center font-semibold cursor-pointer outline-none border-none bg-[#12b886] text-white rounded-md px-4 ml-4 py-1.5 text-xl hover:opacity-80 ">
+            <button
+              className="inline-flex items-center justify-center font-semibold cursor-pointer outline-none border-none bg-[#12b886] text-white rounded-md px-4 ml-4 py-1.5 text-xl hover:opacity-80 "
+              onClick={handleUpload}
+            >
               출간하기
             </button>
           </div>

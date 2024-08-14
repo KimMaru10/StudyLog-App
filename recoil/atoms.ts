@@ -4,11 +4,10 @@ import { atom } from "recoil";
 export const postState = atom({
   key: "postState",
   default: {
-    user_id: "",
+    user_id: "Kim",
     title: "",
     content: "",
     tags: [] as string[],
-    thumbnail_url: "",
     public_status: true,
     custom_url: "",
     short_description: "",
