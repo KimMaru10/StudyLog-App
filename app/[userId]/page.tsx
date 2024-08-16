@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getAllUsers } from "@/utils/supabaseFunction";
+import { getAllUsers } from "@/utils/supabaseUser";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";

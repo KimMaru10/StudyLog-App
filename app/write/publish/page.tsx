@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
-import { postState } from "../../../recoil/atoms";
+import { postState } from "../../../recoil/board";
 import { postBoard } from "@/utils/supabaseFunction";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../utils/supabase";

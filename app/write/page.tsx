@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
-import { postState } from "../../recoil/atoms";
+import { postState } from "../../recoil/board";
 import MarkdownEditor from "../components/MarkdownEditor";
 import Image from "next/image";
 import arrowLeft from "../../public/assets/imgs/arrow-left-long.svg";
